@@ -1,49 +1,45 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Superteam Brazil | Building the Future of Solana</title>
+    <title>Superteam Brazil</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-    <!-- Tailwind CSS (CDN for standalone usage) -->
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Tailwind Config -->
+    <!-- Custom Tailwind Configuration -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
-                    },
-                    colors: {
-                        brazil: {
-                            green: '#009c3b',
-                            yellow: '#ffdf00',
-                            blue: '#002776',
-                            dark: '#0a0a0a'
-                        }
-                    },
                     animation: {
-                        'blob': 'blob 7s infinite',
-                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                        'fade-in-up': 'fadeInUp 1s ease-out forwards',
+                        'gradient-x': 'gradientX 3s ease infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        },
-                        fadeUp: {
+                        fadeInUp: {
                             '0%': { opacity: '0', transform: 'translateY(20px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        gradientX: {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            },
                         }
                     }
                 }
@@ -51,683 +47,620 @@
         }
     </script>
 
-    <!-- Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
     <style>
         body {
-            background-color: #050505;
-            color: #ffffff;
+            background-color: #020617;
+            /* Slate 950 */
+            margin: 0;
+            overflow-x: hidden;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .text-glow {
-            text-shadow: 0 0 20px rgba(0, 156, 59, 0.5);
-        }
-
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.8s ease-out;
-        }
-
-        .animate-on-scroll.is-visible {
-            opacity: 1;
-            transform: translateY(0);
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
         }
     </style>
 </head>
 
-<body class="antialiased selection:bg-brazil-green selection:text-black overflow-x-hidden">
+<body>
+    <div id="root"></div>
 
-    <!-- Navbar -->
-    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <div
-                        class="w-10 h-10 rounded-full bg-gradient-to-tr from-brazil-green via-brazil-yellow to-brazil-blue flex items-center justify-center mr-3 shadow-lg shadow-brazil-green/20">
-                        <span class="font-bold text-black text-xl">S</span>
-                    </div>
-                    <span class="font-bold text-xl tracking-tight text-white">Superteam <span
-                            class="text-brazil-green">Brazil</span></span>
-                </div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="#mission"
-                            class="hover:text-brazil-yellow transition-colors duration-300 px-3 py-2 text-sm font-medium">Mission</a>
-                        <a href="#events"
-                            class="hover:text-brazil-yellow transition-colors duration-300 px-3 py-2 text-sm font-medium">Events</a>
-                        <a href="#members"
-                            class="hover:text-brazil-yellow transition-colors duration-300 px-3 py-2 text-sm font-medium">Members</a>
-                        <a href="#faq"
-                            class="hover:text-brazil-yellow transition-colors duration-300 px-3 py-2 text-sm font-medium">FAQ</a>
-                        <a href="#join"
-                            class="bg-white text-black hover:bg-brazil-yellow transition-all duration-300 px-6 py-2 rounded-full font-bold text-sm transform hover:scale-105">
-                            Join Now
-                        </a>
-                    </div>
-                </div>
+        // --- Icons Collection (Internal Definition to prevent Errors) ---
+        const IconBase = ({ children, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
 
-                <div class="md:hidden">
-                    <button id="mobile-menu-btn" class="text-white hover:text-brazil-yellow focus:outline-none">
-                        <i data-lucide="menu" class="w-8 h-8"></i>
-                    </button>
-                </div>
+        const Icons = {
+            Menu: (props) => <IconBase {...props}><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></IconBase>,
+            X: (props) => <IconBase {...props}><path d="M18 6 6 18" /><path d="m6 6 12 12" /></IconBase>,
+            ArrowRight: (props) => <IconBase {...props}><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></IconBase>,
+            ExternalLink: (props) => <IconBase {...props}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" x2="21" y1="14" y2="3" /></IconBase>,
+            Calendar: (props) => <IconBase {...props}><path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /></IconBase>,
+            Users: (props) => <IconBase {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></IconBase>,
+            Code: (props) => <IconBase {...props}><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></IconBase>,
+            Zap: (props) => <IconBase {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></IconBase>,
+            Globe: (props) => <IconBase {...props}><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></IconBase>,
+            Briefcase: (props) => <IconBase {...props}><rect width="20" height="14" x="2" y="7" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></IconBase>,
+            Trophy: (props) => <IconBase {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" /><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" /></IconBase>,
+            ChevronDown: (props) => <IconBase {...props}><path d="m6 9 6 6 6-6" /></IconBase>,
+            ChevronUp: (props) => <IconBase {...props}><path d="m18 15-6-6-6 6" /></IconBase>,
+            Search: (props) => <IconBase {...props}><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></IconBase>,
+            Linkedin: (props) => <IconBase {...props}><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect width="4" height="12" x="2" y="9" /><circle cx="4" cy="4" r="2" /></IconBase>,
+            Twitter: (props) => <IconBase {...props}><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-12.7 12.5S.2 5.3 7.8 4.5c2.1-.2 3.2-.4 4.4 0 2.2.8 5.7 1.8 9.8-.5" /></IconBase>,
+            MessageCircle: (props) => <IconBase {...props}><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" /></IconBase>,
+            MapPin: (props) => <IconBase {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></IconBase>,
+            ArrowUpRight: (props) => <IconBase {...props}><path d="M7 7h10v10" /><path d="M7 17 17 7" /></IconBase>
+        };
+
+        // --- Mock Data ---
+
+        const IMPACT_STATS = [
+            { label: "Members", value: "850+", icon: Icons.Users },
+            { label: "Events Hosted", value: "45", icon: Icons.Calendar },
+            { label: "Bounties Won", value: "$120K+", icon: Icons.Trophy },
+            { label: "Projects Shipped", value: "30+", icon: Icons.Zap },
+        ];
+
+        const MISSION_PILLARS = [
+            {
+                title: "Builder Support",
+                desc: "Direct mentorship from Solana experts to help you ship faster.",
+                icon: Icons.Code,
+                gradient: "from-green-500/20 to-emerald-500/20",
+                text: "text-emerald-400"
+            },
+            {
+                title: "Grants & Funding",
+                desc: "Access to the Superteam grants ecosystem and VC network.",
+                icon: Icons.Zap,
+                gradient: "from-yellow-500/20 to-amber-500/20",
+                text: "text-amber-400"
+            },
+            {
+                title: "Global Network",
+                desc: "Connect with the worldwide Superteam community across 10+ countries.",
+                icon: Icons.Globe,
+                gradient: "from-blue-500/20 to-indigo-500/20",
+                text: "text-blue-400"
+            },
+            {
+                title: "Career Ops",
+                desc: "Exclusive job listings, bounties, and freelance gigs in Web3.",
+                icon: Icons.Briefcase,
+                gradient: "from-purple-500/20 to-violet-500/20",
+                text: "text-purple-400"
+            }
+        ];
+
+        const UPCOMING_EVENTS = [
+            {
+                title: "Solana Breakpoint Watch Party",
+                date: "Sep 20",
+                location: "São Paulo, SP",
+                type: "Community",
+                image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Rio Rust Bootcamp",
+                date: "Oct 12",
+                location: "Rio de Janeiro, RJ",
+                type: "Education",
+                image: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Superteam Founder Mixer",
+                date: "Oct 25",
+                location: "Florianópolis, SC",
+                type: "Networking",
+                image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&q=80&w=800"
+            }
+        ];
+
+        const MEMBERS_DATA = [
+            { id: 1, name: "Ana Silva", role: "Core Contributor", company: "Superteam BR", skills: ["Core Team", "Community"], image: "https://randomuser.me/api/portraits/women/44.jpg", isCore: true },
+            { id: 2, name: "Carlos Mendez", role: "Rust Developer", company: "DeFi Protocol", skills: ["Rust", "Backend"], image: "https://randomuser.me/api/portraits/men/32.jpg", isCore: false },
+            { id: 3, name: "Beatriz Costa", role: "Product Designer", company: "Freelance", skills: ["Design", "UI/UX"], image: "https://randomuser.me/api/portraits/women/65.jpg", isCore: false },
+            { id: 4, name: "João Santos", role: "Founder", company: "SolPay BR", skills: ["Biz Dev", "Growth"], image: "https://randomuser.me/api/portraits/men/86.jpg", isCore: false },
+            { id: 5, name: "Lucas Oliveira", role: "Frontend Dev", company: "MetaPlex", skills: ["Frontend", "React"], image: "https://randomuser.me/api/portraits/men/22.jpg", isCore: false },
+            { id: 6, name: "Mariana Souza", role: "Content Lead", company: "Superteam BR", skills: ["Core Team", "Content"], image: "https://randomuser.me/api/portraits/women/28.jpg", isCore: true },
+            { id: 7, name: "Rafael Lima", role: "Smart Contract Eng", company: "Drift", skills: ["Rust", "Security"], image: "https://randomuser.me/api/portraits/men/45.jpg", isCore: false },
+            { id: 8, name: "Fernanda Rocha", role: "Marketing", company: "Jupiter", skills: ["Growth", "Content"], image: "https://randomuser.me/api/portraits/women/90.jpg", isCore: false },
+        ];
+
+        const PARTNERS = ["Solana Foundation", "Jupiter", "Drift", "Pyth", "Colosseum", "Backpack"];
+
+        const FAQS = [
+            { q: "What is Superteam Brazil?", a: "We are a community of founders, developers, and grantees working on Solana. We help you launch and grow your project in the Brazilian ecosystem." },
+            { q: "How do I become a member?", a: "Start by joining our Discord and participating in bounties. Once you've won a bounty or received a grant, you become eligible for membership." },
+            { q: "Do I need to be a developer?", a: "No! We need designers, writers, video editors, business developers, and community managers. Web3 is for everyone." },
+            { q: "How can projects partner with us?", a: "Reach out via Twitter or our partnership form. We help global projects localize for Brazil and Brazilian projects go global." },
+        ];
+
+        // --- Reusable Modern Components ---
+
+        const GlassCard = ({ children, className = "" }) => (
+            <div className={`bg-white/[0.03] border border-white/10 backdrop-blur-xl rounded-2xl ${className}`}>
+                {children}
             </div>
-        </div>
+        );
 
-        <!-- Mobile Menu -->
-        <div id="mobile-menu"
-            class="hidden md:hidden bg-black/95 backdrop-blur-xl border-b border-white/10 absolute w-full top-20 left-0">
-            <div class="px-4 py-4 space-y-2">
-                <a href="#mission"
-                    class="block px-3 py-3 rounded-md text-base font-medium hover:bg-white/10 hover:text-brazil-yellow">Mission</a>
-                <a href="#events"
-                    class="block px-3 py-3 rounded-md text-base font-medium hover:bg-white/10 hover:text-brazil-yellow">Events</a>
-                <a href="#members"
-                    class="block px-3 py-3 rounded-md text-base font-medium hover:bg-white/10 hover:text-brazil-yellow">Members</a>
-                <a href="#faq"
-                    class="block px-3 py-3 rounded-md text-base font-medium hover:bg-white/10 hover:text-brazil-yellow">FAQ</a>
-                <a href="#join"
-                    class="block w-full text-center mt-4 bg-brazil-green text-black px-3 py-3 rounded-md font-bold">Join
-                    Now</a>
+        const Badge = ({ children, color = "slate" }) => {
+            const colors = {
+                slate: "bg-slate-800 text-slate-300 border-slate-700",
+                green: "bg-emerald-900/30 text-emerald-400 border-emerald-800/50",
+                yellow: "bg-amber-900/30 text-amber-400 border-amber-800/50",
+                purple: "bg-purple-900/30 text-purple-400 border-purple-800/50",
+            };
+            return (
+                <span className={`px-2 py-0.5 rounded-md text-xs font-medium border ${colors[color] || colors.slate}`}>
+                    {children}
+                </span>
+            );
+        };
+
+        const SectionHeader = ({ title, subtitle, align = "center" }) => (
+            <div className={`mb-16 ${align === "center" ? "text-center" : "text-left"}`}>
+                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tighter">{title}</h2>
+                <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed font-light">{subtitle}</p>
             </div>
-        </div>
-    </nav>
+        );
 
-    <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        <!-- Background Elements -->
-        <div class="absolute inset-0 z-0 overflow-hidden">
-            <div class="absolute top-20 left-10 w-72 h-72 bg-brazil-green/20 rounded-full blur-[100px] animate-blob">
-            </div>
-            <div class="absolute top-40 right-10 w-72 h-72 bg-brazil-blue/20 rounded-full blur-[100px] animate-blob"
-                style="animation-delay: 2s"></div>
-            <div class="absolute -bottom-20 left-1/2 w-96 h-96 bg-brazil-yellow/10 rounded-full blur-[100px] animate-blob"
-                style="animation-delay: 4s"></div>
-        </div>
-
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-on-scroll">
-            <div
-                class="inline-flex items-center px-4 py-2 rounded-full border border-brazil-green/30 bg-brazil-green/10 text-brazil-green mb-8 backdrop-blur-sm">
-                <span class="flex h-2 w-2 rounded-full bg-brazil-green mr-2 animate-pulse"></span>
-                <span class="text-sm font-semibold tracking-wide uppercase">The Solana Hub of Latin America</span>
-            </div>
-
-            <h1 class="text-5xl md:text-7xl font-black tracking-tight mb-6 leading-tight">
-                Building the <br class="hidden md:block" />
-                <span
-                    class="bg-clip-text text-transparent bg-gradient-to-r from-brazil-green via-brazil-yellow to-brazil-green bg-[length:200%_auto] text-glow">Future
-                    of Solana</span><br />
-                in Brazil
-            </h1>
-
-            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-400 mb-10 leading-relaxed font-light">
-                We are the community for builders, founders, and creators.<br class="hidden md:block">
-                Connect, learn, and launch your projects on the world's most performant blockchain.
-            </p>
-
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="https://t.me/SuperteamDAO" target="_blank"
-                    class="group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-black bg-white rounded-full overflow-hidden transition-all duration-300 hover:bg-brazil-yellow hover:scale-105 hover:shadow-[0_0_20px_rgba(255,223,0,0.5)]">
-                    <span class="mr-2">Join Community</span>
-                    <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
-                </a>
-
-                <a href="#mission"
-                    class="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white border border-white/20 rounded-full hover:bg-white/10 transition-all duration-300 backdrop-blur-sm group">
-                    <span class="mr-2">Explore Opportunities</span>
-                    <i data-lucide="globe" class="w-5 h-5 group-hover:rotate-12 transition-transform"></i>
-                </a>
-            </div>
-
-            <!-- Geometric Flag abstraction -->
-            <div class="mt-20 flex justify-center opacity-80 scale-75 md:scale-100">
-                <div
-                    class="relative w-24 h-24 md:w-32 md:h-32 rotate-45 border border-brazil-yellow/30 bg-white/5 backdrop-blur-md flex items-center justify-center animate-pulse">
-                    <div
-                        class="w-16 h-16 md:w-20 md:h-20 bg-brazil-blue/20 rounded-full flex items-center justify-center border border-brazil-blue/40">
+        const Navbar = ({ activeView, setView, isMobileOpen, setIsMobileOpen }) => (
+            <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[92%] max-w-6xl z-50">
+                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-full px-6 py-4 shadow-2xl shadow-black/50">
+                    <div className="flex justify-between items-center">
+                        {/* Logo */}
                         <div
-                            class="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-brazil-green to-transparent -rotate-45">
+                            className="flex-shrink-0 flex items-center cursor-pointer group gap-3"
+                            onClick={() => setView('landing')}
+                        >
+                            <div className="relative w-8 h-8 flex items-center justify-center">
+                                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500 to-blue-500 rounded-full blur opacity-75 group-hover:opacity-100 transition-opacity" />
+                                <div className="relative w-full h-full bg-slate-950 rounded-full border border-white/10 flex items-center justify-center">
+                                    <span className="font-bold text-xs text-white">ST</span>
+                                </div>
+                            </div>
+                            <span className="font-bold text-lg text-white tracking-tight">
+                                Superteam <span className="font-light text-slate-400">Brazil</span>
+                            </span>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Mission / Features -->
-    <section id="mission" class="py-24 bg-black relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 animate-on-scroll">
-                <h2 class="text-3xl md:text-5xl font-bold mb-4">What We Do</h2>
-                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                    We are here to empower the next generation of Brazilian heavy hitters in crypto.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Card 1 -->
-                <div
-                    class="glass-card p-8 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group animate-on-scroll">
-                    <i data-lucide="rocket"
-                        class="w-10 h-10 text-brazil-green mb-6 group-hover:scale-110 transition-transform"></i>
-                    <h3 class="text-xl font-bold mb-3 text-white">Builder Support</h3>
-                    <p class="text-gray-400 leading-relaxed">Get technical support, mentorship, and resources to launch
-                        your project on Solana from zero to one.</p>
-                </div>
-                <!-- Card 2 -->
-                <div class="glass-card p-8 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group animate-on-scroll"
-                    style="transition-delay: 100ms">
-                    <i data-lucide="calendar"
-                        class="w-10 h-10 text-brazil-yellow mb-6 group-hover:scale-110 transition-transform"></i>
-                    <h3 class="text-xl font-bold mb-3 text-white">Events & Hackathons</h3>
-                    <p class="text-gray-400 leading-relaxed">Participate in local meetups, workshops, and global
-                        hackathons. We bring the community together.</p>
-                </div>
-                <!-- Card 3 -->
-                <div class="glass-card p-8 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group animate-on-scroll"
-                    style="transition-delay: 200ms">
-                    <i data-lucide="banknote"
-                        class="w-10 h-10 text-brazil-blue mb-6 group-hover:scale-110 transition-transform"></i>
-                    <h3 class="text-xl font-bold mb-3 text-white">Grants & Funding</h3>
-                    <p class="text-gray-400 leading-relaxed">Access Foundation grants and VC connections. We help you
-                        find the capital to fund your vision.</p>
-                </div>
-                <!-- Card 4 -->
-                <div
-                    class="glass-card p-8 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group animate-on-scroll">
-                    <i data-lucide="briefcase"
-                        class="w-10 h-10 text-purple-400 mb-6 group-hover:scale-110 transition-transform"></i>
-                    <h3 class="text-xl font-bold mb-3 text-white">Earn Opportunities</h3>
-                    <p class="text-gray-400 leading-relaxed">Find bounties, jobs, and freelance gigs. Get paid in crypto
-                        for your skills.</p>
-                </div>
-                <!-- Card 5 -->
-                <div class="glass-card p-8 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group animate-on-scroll"
-                    style="transition-delay: 100ms">
-                    <i data-lucide="graduation-cap"
-                        class="w-10 h-10 text-pink-400 mb-6 group-hover:scale-110 transition-transform"></i>
-                    <h3 class="text-xl font-bold mb-3 text-white">Education</h3>
-                    <p class="text-gray-400 leading-relaxed">Master Rust and Solana development. We provide the
-                        curriculum and the study groups.</p>
-                </div>
-                <!-- Card 6 -->
-                <div class="glass-card p-8 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group animate-on-scroll"
-                    style="transition-delay: 200ms">
-                    <i data-lucide="users"
-                        class="w-10 h-10 text-orange-400 mb-6 group-hover:scale-110 transition-transform"></i>
-                    <h3 class="text-xl font-bold mb-3 text-white">Network</h3>
-                    <p class="text-gray-400 leading-relaxed">Connect with the top founders and developers in Brazil.
-                        Your network is your net worth.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stats -->
-    <section class="py-20 relative overflow-hidden border-y border-white/5">
-        <div
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-4xl max-h-40 bg-brazil-blue/20 blur-[100px] z-0 pointer-events-none">
-        </div>
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div class="animate-on-scroll">
-                    <div class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="2500">0</div>
-                    <div class="text-sm uppercase tracking-wider text-brazil-green font-bold">Members</div>
-                </div>
-                <div class="animate-on-scroll" style="transition-delay: 100ms">
-                    <div class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="150">0</div>
-                    <div class="text-sm uppercase tracking-wider text-brazil-green font-bold">Events Hosted</div>
-                </div>
-                <div class="animate-on-scroll" style="transition-delay: 200ms">
-                    <div class="text-4xl md:text-5xl font-black text-white mb-2 flex justify-center">
-                        $<span class="counter" data-target="500">0</span>k
-                    </div>
-                    <div class="text-sm uppercase tracking-wider text-brazil-green font-bold">Bounties Paid</div>
-                </div>
-                <div class="animate-on-scroll" style="transition-delay: 300ms">
-                    <div class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="85">0</div>
-                    <div class="text-sm uppercase tracking-wider text-brazil-green font-bold">Projects Shipped</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Events -->
-    <section id="events" class="py-24 bg-black">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 animate-on-scroll">
-                <div>
-                    <h2 className="text-3xl md:text-5xl font-bold mb-4">Upcoming Events</h2>
-                    <h2 class="text-3xl md:text-5xl font-bold mb-4">Upcoming Events</h2>
-                    <p class="text-gray-400 max-w-xl">Join the community at our next gathering. Always free, always
-                        open.</p>
-                </div>
-                <button
-                    class="mt-6 md:mt-0 px-6 py-2 border border-white/20 rounded-full hover:bg-white/10 transition-colors text-sm font-bold uppercase tracking-wider">
-                    View All Events
-                </button>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Event 1 -->
-                <div
-                    class="flex flex-col bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-brazil-green/50 transition-colors group animate-on-scroll">
-                    <div class="h-48 bg-gray-800 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=2070"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80"
-                            alt="Rio">
-                        <div class="absolute top-4 left-4 z-20">
-                            <span
-                                class="bg-brazil-green text-black text-xs font-bold px-3 py-1 rounded-full uppercase">Meetup</span>
+                        {/* Desktop Menu */}
+                        <div className="hidden md:flex items-center space-x-1">
+                            {[
+                                { id: 'landing', label: 'Home' },
+                                { id: 'members', label: 'Members' }
+                            ].map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => setView(item.id)}
+                                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeView === item.id
+                                            ? 'bg-white/10 text-white shadow-inner'
+                                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                        }`}
+                                >
+                                    {item.label}
+                                </button>
+                            ))}
+                            <a href="#events" className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 rounded-full transition-all">Events</a>
+                            <a href="#earn" className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 rounded-full transition-all">Earn</a>
                         </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <div class="flex items-center text-sm text-gray-400 mb-3 space-x-4">
-                            <div class="flex items-center"><i data-lucide="calendar"
-                                    class="w-4 h-4 mr-2 text-brazil-yellow"></i> Oct 24</div>
-                            <div class="flex items-center"><i data-lucide="map-pin"
-                                    class="w-4 h-4 mr-2 text-brazil-blue"></i> Rio de Janeiro</div>
+
+                        {/* CTA */}
+                        <div className="hidden md:flex">
+                            <button className="bg-white text-slate-950 px-6 py-2.5 rounded-full font-semibold text-sm hover:bg-slate-200 transition-all flex items-center gap-2 group">
+                                Join Now <Icons.ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+                            </button>
                         </div>
-                        <h3 class="text-xl font-bold mb-3 group-hover:text-brazil-green transition-colors">Solana Rio
-                            Connect</h3>
-                        <div class="mt-auto pt-4">
-                            <a href="#"
-                                class="w-full flex items-center justify-between text-sm font-bold uppercase tracking-wider hover:text-brazil-yellow transition-colors">
-                                Register Now <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </a>
+
+                        {/* Mobile Menu Button */}
+                        <div className="md:hidden flex items-center">
+                            <button onClick={() => setIsMobileOpen(!isMobileOpen)} className="text-slate-300 hover:text-white p-2">
+                                {isMobileOpen ? <Icons.X size={24} /> : <Icons.Menu size={24} />}
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Event 2 -->
-                <div class="flex flex-col bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-brazil-green/50 transition-colors group animate-on-scroll"
-                    style="transition-delay: 100ms">
-                    <div class="h-48 bg-gray-800 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80"
-                            alt="Code">
-                        <div class="absolute top-4 left-4 z-20">
-                            <span
-                                class="bg-brazil-yellow text-black text-xs font-bold px-3 py-1 rounded-full uppercase">Hackathon</span>
+                {/* Mobile Menu Dropdown */}
+                {isMobileOpen && (
+                    <div className="absolute top-full mt-2 left-0 w-full bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl flex flex-col gap-2">
+                        <button onClick={() => { setView('landing'); setIsMobileOpen(false); }} className="p-4 rounded-xl hover:bg-white/5 text-left text-white font-medium">Home</button>
+                        <button onClick={() => { setView('members'); setIsMobileOpen(false); }} className="p-4 rounded-xl hover:bg-white/5 text-left text-white font-medium">Members Directory</button>
+                        <button className="p-4 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-bold text-center mt-2">
+                            Join Community
+                        </button>
+                    </div>
+                )}
+            </nav>
+        );
+
+        const LandingPage = ({ setView }) => {
+            const [openFaq, setOpenFaq] = useState(null);
+
+            const toggleFaq = (index) => {
+                setOpenFaq(openFaq === index ? null : index);
+            };
+
+            return (
+                <React.Fragment>
+                    {/* Hero Section */}
+                    <section className="relative min-h-screen flex items-center justify-center pt-32 pb-20 overflow-hidden">
+                        {/* Background Mesh */}
+                        <div className="absolute inset-0 bg-slate-950">
+                            <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px]"></div>
+                            <div className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]"></div>
+                            <div className="absolute top-[40%] left-[40%] w-[300px] h-[300px] bg-amber-500/5 rounded-full blur-[100px]"></div>
+
+                            {/* Grid Pattern */}
+                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+                            <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
                         </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <div class="flex items-center text-sm text-gray-400 mb-3 space-x-4">
-                            <div class="flex items-center"><i data-lucide="calendar"
-                                    class="w-4 h-4 mr-2 text-brazil-yellow"></i> Nov 02</div>
-                            <div class="flex items-center"><i data-lucide="map-pin"
-                                    class="w-4 h-4 mr-2 text-brazil-blue"></i> São Paulo</div>
+
+                        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8 animate-fade-in-up hover:bg-white/10 transition-colors cursor-default">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                </span>
+                                <span className="text-sm font-medium text-slate-300">Building LATAM's Web3 Future</span>
+                            </div>
+
+                            <h1 className="text-6xl md:text-8xl font-bold text-white tracking-tighter mb-8 leading-[1.1]">
+                                The Home for <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-yellow-200 to-blue-500 animate-gradient-x">
+                                    Solana Builders
+                                </span>
+                            </h1>
+
+                            <p className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-12 leading-relaxed font-light">
+                                Connect with founders, get funded, and ship products. Establishing Brazil as the premier hub for Web3 talent.
+                            </p>
+
+                            <div className="flex flex-col sm:flex-row justify-center gap-6">
+                                <button className="px-8 py-4 bg-white text-slate-950 rounded-full font-bold text-lg hover:bg-slate-200 transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)]">
+                                    Join Community <Icons.ExternalLink size={20} />
+                                </button>
+                                <button onClick={() => setView('members')} className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-md">
+                                    Explore Talent
+                                </button>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold mb-3 group-hover:text-brazil-green transition-colors">Superteam
-                            Build Station</h3>
-                        <div class="mt-auto pt-4">
-                            <a href="#"
-                                class="w-full flex items-center justify-between text-sm font-bold uppercase tracking-wider hover:text-brazil-yellow transition-colors">
-                                Apply to Build <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </a>
+                    </section>
+
+                    {/* Modern Bento Stats */}
+                    <section className="py-20 bg-slate-950 relative border-t border-white/5">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {IMPACT_STATS.map((stat, idx) => (
+                                    <GlassCard key={idx} className="p-8 flex flex-col items-center justify-center hover:bg-white/[0.05] transition-colors group">
+                                        <stat.icon className="text-slate-500 mb-4 group-hover:text-emerald-400 transition-colors" size={28} />
+                                        <div className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tighter">{stat.value}</div>
+                                        <div className="text-sm text-slate-400 uppercase tracking-widest font-semibold">{stat.label}</div>
+                                    </GlassCard>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </section>
 
-                <!-- Event 3 -->
-                <div class="flex flex-col bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-brazil-green/50 transition-colors group animate-on-scroll"
-                    style="transition-delay: 200ms">
-                    <div class="h-48 bg-gray-800 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2072"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80"
-                            alt="Conf">
-                        <div class="absolute top-4 left-4 z-20">
-                            <span
-                                class="bg-brazil-blue text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Conference</span>
+                    {/* Mission / Pillars - Bento Grid */}
+                    <section className="py-32 bg-slate-950 relative">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <SectionHeader
+                                title="Ecosystem Infrastructure"
+                                subtitle="We provide the tools, capital, and connections for talent to thrive."
+                            />
+
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {MISSION_PILLARS.map((pillar, idx) => (
+                                    <div key={idx} className="group relative bg-slate-900/50 border border-white/5 rounded-3xl p-8 hover:bg-slate-900 transition-all duration-500 overflow-hidden">
+                                        {/* Hover Gradient Bloom */}
+                                        <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-br ${pillar.gradient} blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-700`}></div>
+
+                                        <div className="relative z-10 flex flex-col h-full">
+                                            <div className={`w-14 h-14 rounded-2xl bg-slate-950 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 ${pillar.text}`}>
+                                                <pillar.icon size={28} />
+                                            </div>
+                                            <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">{pillar.title}</h3>
+                                            <p className="text-slate-400 text-lg leading-relaxed">{pillar.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <div class="flex items-center text-sm text-gray-400 mb-3 space-x-4">
-                            <div class="flex items-center"><i data-lucide="calendar"
-                                    class="w-4 h-4 mr-2 text-brazil-yellow"></i> Nov 15</div>
-                            <div class="flex items-center"><i data-lucide="map-pin"
-                                    class="w-4 h-4 mr-2 text-brazil-blue"></i> Florianópolis</div>
+                    </section>
+
+                    {/* Featured Members - Minimalist Cards */}
+                    <section className="py-32 bg-slate-950 border-t border-white/5">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex flex-col md:flex-row justify-between items-end mb-16">
+                                <div>
+                                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tighter">Top Talent</h2>
+                                    <p className="text-slate-400 text-lg font-light">Meet the builders shaping the future.</p>
+                                </div>
+                                <button
+                                    onClick={() => setView('members')}
+                                    className="group flex items-center gap-2 px-6 py-3 rounded-full border border-white/10 text-white hover:bg-white/5 transition-all mt-6 md:mt-0"
+                                >
+                                    View Directory <Icons.ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                                </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {MEMBERS_DATA.slice(0, 4).map((member) => (
+                                    <div key={member.id} className="group relative">
+                                        <div className="aspect-[4/5] rounded-3xl overflow-hidden bg-slate-900 relative">
+                                            <img src={member.image} alt={member.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-90"></div>
+
+                                            <div className="absolute bottom-0 left-0 w-full p-6">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <h3 className="text-xl font-bold text-white">{member.name}</h3>
+                                                    {member.isCore && <Badge color="yellow">CORE</Badge>}
+                                                </div>
+                                                <p className="text-slate-300 text-sm mb-3">{member.role}</p>
+                                                <div className="flex gap-2">
+                                                    {member.skills.slice(0, 2).map((skill, idx) => (
+                                                        <span key={idx} className="text-[10px] uppercase tracking-wider font-bold text-slate-500 bg-black/40 px-2 py-1 rounded">
+                                                            {skill}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold mb-3 group-hover:text-brazil-green transition-colors">DeFi Summit
-                            Brazil</h3>
-                        <div class="mt-auto pt-4">
-                            <a href="#"
-                                class="w-full flex items-center justify-between text-sm font-bold uppercase tracking-wider hover:text-brazil-yellow transition-colors">
-                                Get Tickets <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </a>
+                    </section>
+
+                    {/* Events Section - Horizontal Scroll / Cards */}
+                    <section className="py-32 bg-slate-950">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <SectionHeader title="Community Events" subtitle="Workshops, mixers, and hackathons happening across Brazil." />
+
+                            <div className="grid md:grid-cols-3 gap-8">
+                                {UPCOMING_EVENTS.map((event, idx) => (
+                                    <div key={idx} className="group rounded-3xl overflow-hidden bg-slate-900 border border-white/5 hover:border-white/10 transition-all">
+                                        <div className="relative h-64 overflow-hidden">
+                                            <img src={event.image} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md border border-white/10 text-white text-xs font-bold px-3 py-1.5 rounded-full z-20">
+                                                {event.type}
+                                            </div>
+                                        </div>
+                                        <div className="p-8">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="flex items-center gap-2 text-emerald-400 text-sm font-semibold">
+                                                    <Icons.Calendar size={16} /> {event.date}
+                                                </div>
+                                                <div className="flex items-center gap-1 text-slate-500 text-sm">
+                                                    <Icons.MapPin size={14} /> {event.location.split(',')[0]}
+                                                </div>
+                                            </div>
+                                            <h3 className="text-2xl font-bold text-white mb-6 group-hover:text-emerald-400 transition-colors leading-tight">{event.title}</h3>
+                                            <button className="flex items-center gap-2 text-sm font-bold text-white group/btn">
+                                                Register Now <Icons.ArrowUpRight size={16} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                    </section>
 
-    <!-- Members -->
-    <section id="members" class="py-24 bg-zinc-900 border-t border-white/5">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 animate-on-scroll">
-                <h2 class="text-3xl md:text-5xl font-bold mb-4">Meet the <span class="text-brazil-yellow">Force</span>
-                </h2>
-                <p class="text-gray-400">The brilliant minds building the future of Brazil.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Member 1 -->
-                <div
-                    class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-brazil-green/50 transition-all duration-300 animate-on-scroll">
-                    <div class="flex items-center space-x-4 mb-4">
-                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200"
-                            alt="Ana" class="w-16 h-16 rounded-full object-cover border-2 border-brazil-green/30">
-                        <div>
-                            <h3 class="font-bold text-lg text-white">Ana Silva</h3>
-                            <p class="text-brazil-green text-sm">Rust Developer</p>
+                    {/* Partners - Monochrome Minimal */}
+                    <section className="py-24 border-y border-white/5 bg-slate-950">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                            <p className="text-slate-500 text-sm tracking-widest font-semibold mb-12">POWERED BY THE BEST</p>
+                            <div className="flex flex-wrap justify-center gap-12 md:gap-20 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
+                                {PARTNERS.map((partner, idx) => (
+                                    <div key={idx} className="text-2xl font-bold text-slate-300 flex items-center gap-3">
+                                        <div className="w-6 h-6 rounded-full bg-slate-800"></div> {partner}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">Rust</span>
-                        <span class="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">Anchor</span>
-                        <span class="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">DeFi</span>
-                    </div>
-                    <div class="flex space-x-3 pt-4 border-t border-white/10">
-                        <i data-lucide="twitter" class="w-5 h-5 text-gray-400 hover:text-white cursor-pointer"></i>
-                        <i data-lucide="github" class="w-5 h-5 text-gray-400 hover:text-white cursor-pointer"></i>
-                    </div>
-                </div>
+                    </section>
 
-                <!-- Member 2 -->
-                <div class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-brazil-green/50 transition-all duration-300 animate-on-scroll"
-                    style="transition-delay: 100ms">
-                    <div class="flex items-center space-x-4 mb-4">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"
-                            alt="Lucas" class="w-16 h-16 rounded-full object-cover border-2 border-brazil-green/30">
-                        <div>
-                            <h3 class="font-bold text-lg text-white">Lucas Oliveira</h3>
-                            <p class="text-brazil-green text-sm">Product Designer</p>
+                    {/* FAQ - Accordion */}
+                    <section className="py-32 bg-slate-950">
+                        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <SectionHeader title="Questions?" align="center" />
+                            <div className="space-y-4">
+                                {FAQS.map((faq, idx) => (
+                                    <div key={idx} className="border border-white/5 rounded-2xl bg-white/[0.02] overflow-hidden hover:bg-white/[0.04] transition-colors">
+                                        <button
+                                            onClick={() => toggleFaq(idx)}
+                                            className="w-full px-8 py-6 flex justify-between items-center text-left"
+                                        >
+                                            <span className="text-lg text-white font-medium tracking-tight">{faq.q}</span>
+                                            {openFaq === idx ? <Icons.ChevronUp className="text-slate-400" /> : <Icons.ChevronDown className="text-slate-400" />}
+                                        </button>
+                                        {openFaq === idx && (
+                                            <div className="px-8 pb-8 pt-0 text-slate-400 leading-relaxed">
+                                                {faq.a}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">UI/UX</span>
-                        <span class="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">Figma</span>
-                        <span class="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">NFTs</span>
-                    </div>
-                    <div class="flex space-x-3 pt-4 border-t border-white/10">
-                        <i data-lucide="twitter" class="w-5 h-5 text-gray-400 hover:text-white cursor-pointer"></i>
-                        <i data-lucide="dribbble" class="w-5 h-5 text-gray-400 hover:text-white cursor-pointer"></i>
-                    </div>
-                </div>
+                    </section>
 
-                <!-- Member 3 -->
-                <div class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-brazil-green/50 transition-all duration-300 animate-on-scroll"
-                    style="transition-delay: 200ms">
-                    <div class="flex items-center space-x-4 mb-4">
-                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200"
-                            alt="Mariana" class="w-16 h-16 rounded-full object-cover border-2 border-brazil-green/30">
-                        <div>
-                            <h3 class="font-bold text-lg text-white">Mariana Santos</h3>
-                            <p class="text-brazil-green text-sm">Founder @ SolPay</p>
+                    {/* Footer - Minimal */}
+                    <section className="py-32 relative overflow-hidden flex flex-col items-center justify-center text-center">
+                        <div className="absolute inset-0 bg-slate-950">
+                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-t from-emerald-900/20 to-transparent blur-[120px]"></div>
                         </div>
-                    </div>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">Business</span>
-                        <span class="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">Strategy</span>
-                    </div>
-                    <div class="flex space-x-3 pt-4 border-t border-white/10">
-                        <i data-lucide="twitter" class="w-5 h-5 text-gray-400 hover:text-white cursor-pointer"></i>
-                        <i data-lucide="linkedin" class="w-5 h-5 text-gray-400 hover:text-white cursor-pointer"></i>
-                    </div>
-                </div>
-            </div>
 
-            <div class="mt-12 text-center animate-on-scroll">
-                <a href="#"
-                    class="text-brazil-green font-bold hover:text-white transition-colors border-b border-brazil-green hover:border-white pb-1">
-                    View Full Directory &rarr;
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq" class="py-24 bg-black">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 animate-on-scroll">Desperately Asked Questions
-            </h2>
-            <div class="space-y-2">
-                <!-- Accordion Item 1 -->
-                <div class="border-b border-white/10 faq-item animate-on-scroll">
-                    <button class="w-full py-6 flex items-center justify-between text-left focus:outline-none"
-                        onclick="toggleFaq(this)">
-                        <span class="text-lg font-medium text-white">What is Superteam Brazil?</span>
-                        <i data-lucide="plus" class="text-gray-400 transform transition-transform duration-300"></i>
-                    </button>
-                    <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out text-gray-400">
-                        <p class="pb-6 leading-relaxed">Superteam Brazil is a community of founders, developers, and
-                            grantees working on Solana. We help you earn, learn, and build in the crypto ecosystem.</p>
-                    </div>
-                </div>
-                <!-- Accordion Item 2 -->
-                <div class="border-b border-white/10 faq-item animate-on-scroll">
-                    <button class="w-full py-6 flex items-center justify-between text-left focus:outline-none"
-                        onclick="toggleFaq(this)">
-                        <span class="text-lg font-medium text-white">How do I become a member?</span>
-                        <i data-lucide="plus" class="text-gray-400 transform transition-transform duration-300"></i>
-                    </button>
-                    <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out text-gray-400">
-                        <p class="pb-6 leading-relaxed">You can start by joining our Telegram. Full membership is earned
-                            by winning bounties, receiving grants, or contributing significantly to the community.</p>
-                    </div>
-                </div>
-                <!-- Accordion Item 3 -->
-                <div class="border-b border-white/10 faq-item animate-on-scroll">
-                    <button class="w-full py-6 flex items-center justify-between text-left focus:outline-none"
-                        onclick="toggleFaq(this)">
-                        <span class="text-lg font-medium text-white">Do I need to be a developer?</span>
-                        <i data-lucide="plus" class="text-gray-400 transform transition-transform duration-300"></i>
-                    </button>
-                    <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out text-gray-400">
-                        <p class="pb-6 leading-relaxed">Not at all! We have opportunities for writers, designers,
-                            community managers, and business developers. Only about 50% of our members are coders.</p>
-                    </div>
-                </div>
-                <!-- Accordion Item 4 -->
-                <div class="border-b border-white/10 faq-item animate-on-scroll">
-                    <button class="w-full py-6 flex items-center justify-between text-left focus:outline-none"
-                        onclick="toggleFaq(this)">
-                        <span class="text-lg font-medium text-white">Is it free to join?</span>
-                        <i data-lucide="plus" class="text-gray-400 transform transition-transform duration-300"></i>
-                    </button>
-                    <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out text-gray-400">
-                        <p class="pb-6 leading-relaxed">Yes, joining the community is completely free. In fact, many
-                            members start earning crypto through our bounties within their first week.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA -->
-    <section id="join" class="py-24 relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-b from-brazil-green/10 to-brazil-blue/10 pointer-events-none"></div>
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center animate-on-scroll">
-            <h2 class="text-4xl md:text-6xl font-black mb-6">Ready to Build With Us?</h2>
-            <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
-                Join 2,000+ others in the fastest growing Web3 community in Latin America.
-            </p>
-
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                <button
-                    class="flex items-center px-8 py-4 bg-[#0088cc] hover:bg-[#0077b5] text-white rounded-full font-bold text-lg transition-all hover:scale-105 shadow-lg shadow-blue-900/20">
-                    <i data-lucide="send" class="w-5 h-5 mr-3"></i> Join Telegram
-                </button>
-                <button
-                    class="flex items-center px-8 py-4 bg-[#5865F2] hover:bg-[#4752c4] text-white rounded-full font-bold text-lg transition-all hover:scale-105 shadow-lg shadow-indigo-900/20">
-                    <i data-lucide="message-circle" class="w-5 h-5 mr-3"></i> Join Discord
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-black border-t border-white/10 pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                <div class="col-span-1 md:col-span-1">
-                    <div class="flex items-center mb-4">
-                        <div
-                            class="w-8 h-8 rounded-full bg-gradient-to-tr from-brazil-green via-brazil-yellow to-brazil-blue flex items-center justify-center mr-2">
-                            <span class="font-bold text-black text-sm">S</span>
+                        <div className="relative z-10 max-w-4xl px-6">
+                            <h2 className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tighter">Ready to Build?</h2>
+                            <p className="text-xl text-slate-400 mb-12 font-light">Join the Discord, find a team, and start earning today.</p>
+                            <div className="flex flex-col sm:flex-row justify-center gap-4">
+                                <button className="px-10 py-4 bg-white text-slate-950 rounded-full font-bold hover:bg-slate-200 transition-colors flex items-center justify-center gap-2">
+                                    <Icons.MessageCircle size={20} /> Join Discord
+                                </button>
+                                <button className="px-10 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold hover:bg-white/5 transition-colors">
+                                    Subscribe
+                                </button>
+                            </div>
                         </div>
-                        <span class="font-bold text-xl tracking-tight text-white">Superteam <span
-                                class="text-brazil-green">Brazil</span></span>
-                    </div>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        Empowering the builders of tomorrow. The talent layer of the Solana ecosystem in Brazil.
-                    </p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4">Discover</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-brazil-yellow transition-colors">Earn</a></li>
-                        <li><a href="#" class="hover:text-brazil-yellow transition-colors">Build</a></li>
-                        <li><a href="#" class="hover:text-brazil-yellow transition-colors">Grants</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4">Community</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-brazil-yellow transition-colors">Events</a></li>
-                        <li><a href="#" class="hover:text-brazil-yellow transition-colors">Members</a></li>
-                        <li><a href="#" class="hover:text-brazil-yellow transition-colors">Twitter (X)</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4">Legal</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-brazil-yellow transition-colors">Privacy</a></li>
-                        <li><a href="#" class="hover:text-brazil-yellow transition-colors">Terms</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div
-                class="border-top border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center bg-black">
-                <p class="text-gray-500 text-sm">© 2026 Superteam Brazil. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+                    </section>
+                </React.Fragment>
+            );
+        };
 
-    <!-- Scripts -->
-    <script>
-        // Initialize Lucide Icons
-        lucide.createIcons();
+        const MembersDirectory = () => {
+            const [filter, setFilter] = useState("All");
+            const [searchTerm, setSearchTerm] = useState("");
 
-        // Mobile Menu Toggle
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
-        if (btn && menu) {
-            btn.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-                // Optional: toggle icon state if needed
+            const filters = ["All", "Core Team", "Rust", "Frontend", "Design", "Content", "Growth"];
+
+            const filteredMembers = MEMBERS_DATA.filter(member => {
+                const matchesFilter = filter === "All" || member.skills.includes(filter);
+                const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    member.role.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesFilter && matchesSearch;
             });
+
+            return (
+                <div className="pt-32 min-h-screen bg-slate-950">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                        <div className="text-center mb-16">
+                            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tighter">Members Directory</h1>
+                            <p className="text-slate-400 text-lg font-light max-w-2xl mx-auto">
+                                Discover the best talent in the Brazilian Solana ecosystem. Connect, collaborate, and build together.
+                            </p>
+                        </div>
+
+                        {/* Modern Filters */}
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-16">
+                            <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                                {filters.map(f => (
+                                    <button
+                                        key={f}
+                                        onClick={() => setFilter(f)}
+                                        className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${filter === f
+                                                ? 'bg-white text-slate-950 shadow-[0_0_15px_rgba(255,255,255,0.2)]'
+                                                : 'bg-white/5 text-slate-400 border border-white/5 hover:bg-white/10 hover:text-white'
+                                            }`}
+                                    >
+                                        {f}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="relative w-full md:w-80">
+                                <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                <input
+                                    type="text"
+                                    placeholder="Search members..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-full pl-12 pr-6 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-white/20 focus:bg-white/10 transition-all"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Member Grid - Consistent Card Style */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {filteredMembers.map((member) => (
+                                <GlassCard key={member.id} className="overflow-hidden group hover:border-white/20 transition-all">
+                                    <div className="p-6 flex flex-col items-center text-center">
+                                        <div className="w-24 h-24 rounded-full overflow-hidden mb-6 border-2 border-slate-800 group-hover:border-emerald-500/50 transition-colors">
+                                            <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white mb-1 tracking-tight">{member.name}</h3>
+                                        <p className="text-emerald-400 text-sm font-medium mb-1">{member.role}</p>
+                                        <p className="text-slate-500 text-xs mb-6 uppercase tracking-wider">{member.company}</p>
+
+                                        <div className="flex flex-wrap justify-center gap-2 mb-6">
+                                            {member.skills.slice(0, 3).map((skill, idx) => (
+                                                <span key={idx} className="px-3 py-1 bg-white/5 border border-white/5 text-slate-300 text-[10px] font-bold uppercase tracking-wider rounded-md">
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                        </div>
+
+                                        <div className="flex gap-4 mt-auto">
+                                            <button className="text-slate-500 hover:text-white transition-colors"><Icons.Twitter size={18} /></button>
+                                            <button className="text-slate-500 hover:text-white transition-colors"><Icons.Linkedin size={18} /></button>
+                                        </div>
+                                    </div>
+                                </GlassCard>
+                            ))}
+                        </div>
+
+                        {filteredMembers.length === 0 && (
+                            <div className="text-center py-32 border border-dashed border-white/10 rounded-3xl bg-white/[0.02]">
+                                <Icons.Users className="mx-auto h-12 w-12 text-slate-600 mb-4" />
+                                <p className="text-slate-500 text-lg">No members found matching your criteria.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const Footer = ({ setView }) => (
+            <footer className="bg-slate-950 border-t border-white/5 py-20 text-center md:text-left">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-8 text-sm text-slate-500">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                <span className="font-bold text-white text-xs">ST</span>
+                            </div>
+                            <span className="font-medium">© 2024 Superteam Brazil</span>
+                        </div>
+
+                        <div className="flex gap-8">
+                            <a href="#" className="hover:text-white transition-colors">Twitter</a>
+                            <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
+                            <a href="#" className="hover:text-white transition-colors">Instagram</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        );
+
+        function App() {
+            const [view, setView] = useState('landing');
+            const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, [view]);
+
+            return (
+                <div className="min-h-screen bg-slate-950 font-sans selection:bg-emerald-500/30 text-slate-200">
+                    <Navbar
+                        activeView={view}
+                        setView={setView}
+                        isMobileOpen={isMobileOpen}
+                        setIsMobileOpen={setIsMobileOpen}
+                    />
+
+                    <main>
+                        {view === 'landing' ? (
+                            <LandingPage setView={setView} />
+                        ) : (
+                            <MembersDirectory />
+                        )}
+                    </main>
+
+                    <Footer setView={setView} />
+                </div>
+            );
         }
 
-        // Animated Counters
-        const counters = document.querySelectorAll('.counter');
-        const options = {
-            threshold: 0.5
-        };
-
-        const counterObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const counter = entry.target;
-                    const target = +counter.getAttribute('data-target');
-                    const duration = 2000;
-                    const start = 0;
-                    const startTime = performance.now();
-
-                    const updateCounter = (currentTime) => {
-                        const elapsed = currentTime - startTime;
-                        const progress = Math.min(elapsed / duration, 1);
-
-                        // Ease out quart
-                        const ease = 1 - Math.pow(1 - progress, 4);
-
-                        counter.innerText = Math.ceil(ease * target);
-
-                        if (progress < 1) {
-                            requestAnimationFrame(updateCounter);
-                        } else {
-                            counter.innerText = target;
-                        }
-                    };
-                    requestAnimationFrame(updateCounter);
-                    observer.unobserve(counter);
-                }
-            });
-        }, options);
-
-        counters.forEach(counter => {
-            counterObserver.observe(counter);
-        });
-
-        // FAQ Accordion
-        window.toggleFaq = function (button) {
-            const content = button.nextElementSibling;
-            const icon = button.querySelector('i');
-
-            // Close others (optional - strictly accordion style)
-            // const allContents = document.querySelectorAll('.faq-item > div');
-            // allContents.forEach(c => {
-            //     if(c !== content) c.style.maxHeight = null;
-            // });
-
-            if (content.style.maxHeight) {
-                content.style.maxHeight = null;
-                // Rotate icon back
-                icon.style.transform = 'rotate(0deg)';
-                icon.classList.remove('text-brazil-green');
-                icon.classList.add('text-gray-400');
-            } else {
-                content.style.maxHeight = content.scrollHeight + "px";
-                // Rotate icon
-                icon.style.transform = 'rotate(45deg)';
-                icon.classList.remove('text-gray-400');
-                icon.classList.add('text-brazil-green');
-            }
-        };
-
-        // Scroll Reveal Animation
-        const scrollObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    scrollObserver.unobserve(entry.target); // Reveal once
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.animate-on-scroll').forEach(el => {
-            scrollObserver.observe(el);
-        });
-
-        // Navbar blur on scroll
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('bg-black/90', 'backdrop-blur-md', 'shadow-lg');
-            } else {
-                navbar.classList.remove('bg-black/90', 'backdrop-blur-md', 'shadow-lg');
-            }
-        });
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 
